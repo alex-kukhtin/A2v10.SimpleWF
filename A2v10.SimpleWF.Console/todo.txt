@@ -1,0 +1,17 @@
+﻿
+
+0:Push 'X'
+1:Push 'Y'
+2:Call 'Assign' => Y = X
+3:Push 'X > 0'
+4:Push '8'
+5:Push '2'
+6:Call 'Decision' => if X > 0 then goto 2 else goto 8
+
+
+Compile Assing:
+===============
+Push 'To' (Variable name)
+Push 'Value' (Expression)
+Push 'Assign' (Activity name)
+Call -> выбираем имя из 

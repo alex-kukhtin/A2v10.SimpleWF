@@ -1,0 +1,27 @@
+
+
+/*simple run
+<Flow Name="Assign" Ref="Root">
+	<Start Ref="Ref0" Next="Ref1" />
+	<Assign Ref="Ref1" To="Result.res" Value="Arg.x + Arg.y" />
+</Flow>
+*/
+
+00: Invoke "Root"
+01: Stop
+
+02: Start "Root" # flow
+
+04: Call "Ref0" // адрес возврата в стек
+05: Call Next /*= Ref1*/
+06: Ret - переход по адресу из стека
+
+07: Start "Ref0" # Start
+08: Ret
+
+20: Start "Ref1"
+21: Exec "Assign", {To="", Value=""}
+22: Ret
+
+87:  "Root" -- 88 в стек
+88: Stop

@@ -1,0 +1,29 @@
+﻿<Samples>
+	<Flow Name="Assign">
+		<Start Ref="Ref0" Next="Ref1" />
+		<Assign Ref="Ref1" To="Result.res" Value="Arg.x + Arg.y" />
+	</Flow>
+	<Flow Name="Decision">
+		<Start Ref="Ref0" Next="Ref1"/>
+		<Decision Ref="Ref1" Condition="Arg.x > 0" Then="Ref2" Else="Ref3"/>
+		<Assign Ref="Ref2" Next="Ref1" To="Arg.x" Value="Arg.x - 1"/>
+		<Assign Ref="Ref3" To="Result.res" Value="Arg.x"/>
+	</Flow>
+	<StateMachine>
+		<StartState Next="S1"/>
+		<State Key="S1" Next="S2">
+			<State.Entry>
+				<Assign To="Arg.x" Value="Arg.x - 1"/>
+			</State.Entry>
+			<State.Transitions>
+				<Transition Condition="Arg.x > 0" Destination="S1"/>
+			</State.Transitions>
+		</State>
+		<State Key="S2" Next="S3">
+			<State.Exit>
+				<Assign To="Result.res" Value="Arg.x"/>
+			</State.Exit>
+		</State>
+		<FinalState Key="S2" />
+	</StateMachine>
+</Samples>
