@@ -1,7 +1,5 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace A2v10.SimpleWF
 {
@@ -28,11 +26,8 @@ namespace A2v10.SimpleWF
 			if (Trigger != null)
 				compiler.Emit(OpCode.Invoke, Trigger.Ref);
 			compiler.Emit(OpCode.Condition, Condition);
-			compiler.EmitOffset(OpCode.BrFalse, +4); // to else
-			if (Action != null)
-				compiler.Emit(OpCode.Invoke, Action.Ref);
-			else
-				compiler.Emit(OpCode.Nop);
+			compiler.EmitOffset(OpCode.BrFalse, +3); // to next transition
+			compiler.EmitInvoke(Action);
 			compiler.Emit(OpCode.Store, Destination);
 		}
 	}

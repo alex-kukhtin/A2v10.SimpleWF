@@ -1,6 +1,6 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace A2v10.SimpleWF
 {
@@ -32,18 +32,9 @@ namespace A2v10.SimpleWF
 
 			for (int i=0; i<Transitions.Count; i++)
 			{
+				// order is important!
 				var trans = Transitions[i];
-				// fire trigger
-				if (trans.Trigger != null)
-					compiler.Emit(OpCode.Invoke, trans.Trigger.Ref);
-				compiler.Emit(OpCode.Condition, trans.Condition);
-				compiler.EmitOffset(OpCode.BrFalse, +4); // to else
-				if (trans.Action != null)
-					compiler.Emit(OpCode.Invoke, trans.Action.Ref);
-				else
-					compiler.Emit(OpCode.Nop);
-				compiler.Emit(OpCode.Store, trans.Destination);
-				compiler.Emit(OpCode.Goto, null, endAddress);
+				trans.CompileAction(compiler);
 			}
 			compiler.Emit(OpCode.Goto, null, endAddress); // break
 

@@ -28,6 +28,14 @@ namespace A2v10.SimpleWF
 			return _code.Add(new Instruction(op, name, address));
 		}
 
+		public Int32 EmitInvoke(Activity activity)
+		{
+			if (activity != null)
+				return Emit(OpCode.Invoke, activity.Ref);
+			else
+				return Emit(OpCode.Nop);
+		}
+
 		public Int32 StartActivity(Activity activity)
 		{
 			return Emit(OpCode.Start, activity.Ref);

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using System;
 
 namespace A2v10.SimpleWF
 {
@@ -14,13 +13,11 @@ namespace A2v10.SimpleWF
 		{
 			// executing
 			compiler.StartActivity(this);
-			if (Entry != null)
-				compiler.Emit(OpCode.Invoke, Entry.Ref);
+			compiler.EmitInvoke(Entry);
 			compiler.EndActivity(this);
 
 			// compile children
-			if (Entry != null)
-				Entry.Compile(compiler);
+			Entry?.Compile(compiler);
 		}
 	}
 }

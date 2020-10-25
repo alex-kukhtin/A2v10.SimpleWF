@@ -12,10 +12,12 @@ namespace A2v10.SimpleWF
 		public override void Compile(Compiler compiler)
 		{
 			compiler.StartActivity(this);
+			// order is important!
 			for (var i = 0; i < Steps.Count; i++)
 				compiler.Emit(OpCode.Invoke, Steps[i].Ref);
 			compiler.EndActivity(this);
 
+			// compile children
 			foreach (var step in Steps)
 				step.Compile(compiler);
 		}
