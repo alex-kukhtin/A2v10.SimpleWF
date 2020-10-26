@@ -21,15 +21,30 @@ namespace A2v10.SimpleWF
 		public override void Compile(Compiler compiler)
 		{
 			compiler.StartActivity(this);
+
 			foreach (var br in Branches)
 			{
-				compiler.Emit(OpCode.Invoke, br.Ref);
 			}
+
+			Int32 switchAddr = compiler.Emit(OpCode.Switch, null, 0);
 			compiler.EndActivity(this);
 
 			// compile children
-			foreach (var step in Branches)
-				step.Compile(compiler);
+			var brTable = new Dictionary<String, Int32>();
+			foreach (var br in Branches)
+			{
+				Int32 stepAddr = compiler.CP;
+				br.Compile(compiler);
+				brTable.Add(br.Ref, stepAddr);
+			}
+			// lookup table for this stateMachine
+			Int32 lookupTableAddress = compiler.CP;
+			foreach (var br in brTable)
+			{
+				compiler.Emit(OpCode.Data, br.Key, br.Value);
+			}
+			compiler.Emit(OpCode.Data, null, -1);
+			compiler.SetAddress(switchAddr, lookupTableAddress);
 		}
 	}
 }

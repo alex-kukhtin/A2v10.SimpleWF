@@ -35,7 +35,7 @@ namespace A2v10.SimpleWF
 			compiler.EndActivity(this);
 			// Swith does not Invoke, but makes Goto!
 			compiler.Emit(OpCode.Push, null, loopStart); // for "Ret" from Steps
-			Int32 emitAddr = compiler.Emit(OpCode.Switch, null, 0);
+			Int32 switchAddr = compiler.Emit(OpCode.Switch, null, 0);
 			compiler.EmitOffset(OpCode.Goto, -8 /*loop start*/);
 			compiler.EndActivity(this);
 
@@ -54,7 +54,7 @@ namespace A2v10.SimpleWF
 				compiler.Emit(OpCode.Data, br.Key, br.Value);
 			}
 			compiler.Emit(OpCode.Data, null, -1);
-			compiler.SetAddress(emitAddr, lookupTableAddress);
+			compiler.SetAddress(switchAddr, lookupTableAddress);
 		}
 
 		public override void OnInit(Activity parent)
