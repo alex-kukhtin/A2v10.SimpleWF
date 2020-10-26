@@ -1,21 +1,20 @@
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using A2v10.SimpleWF;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace A2v10.SimpleWF.Tests
 {
 	[TestClass]
 	[TestCategory("Flow")]
-	public class FlowTest
+	public class TestFlow
 	{
 		[TestMethod]
-		public void Assign()
+		public void Sequence()
 		{
-			var f = new Flow() { Ref = "Ref0" };
-			f.Steps.Add(new Start() { Ref = "Ref1", Next = "Ref2" });
-			f.Steps.Add(new Assign() { Ref= "Ref2", To = "Result.res", Value = "Arg.x + Arg.y" });
+			var f = new Sequence() { Ref = "Ref0" };
+			f.Steps.Add(new Assign() { Ref = "Ref1", To = "Arg.r", Value="Arg.x + Arg.y"});
+			f.Steps.Add(new Assign() { Ref = "Ref2", To = "Result.res", Value = "Arg.r" });
 
 			var wf = new Workflow() { Root = f };
 
@@ -27,27 +26,6 @@ namespace A2v10.SimpleWF.Tests
 			objCode.Run(arg);
 			var res = objCode.Result;
 			Assert.AreEqual(5, res.Eval<Int32>("res"));
-		}
-
-		[TestMethod]
-		public void Decision()
-		{
-			var f = new Flow();
-			f.Steps.Add(new Start() { Ref = "Ref0", Next = "Ref1" });
-			f.Steps.Add(new Decision() {Ref = "Ref1", Condition = "Arg.x > 0", Then = "Ref2", Else = "Ref3" });
-			f.Steps.Add(new Assign() { Ref = "Ref2", Next = "Ref1", To = "Arg.x", Value = "Arg.x - 1" });
-			f.Steps.Add(new Assign() { Ref = "Ref3", To = "Result.res", Value = "Arg.x" });
-
-			var wf = new Workflow() { Root = f };
-
-			var objCode = wf.Compile();
-
-			var arg = new DynamicObject();
-			arg.Set("x", 10);
-			objCode.Run(arg);
-			var res = objCode.Result;
-
-			Assert.AreEqual(0, res.Eval<Int32>("x"));
 		}
 	}
 }

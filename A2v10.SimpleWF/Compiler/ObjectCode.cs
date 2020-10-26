@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace A2v10.SimpleWF
@@ -26,12 +27,14 @@ namespace A2v10.SimpleWF
 		Condition = 22,
 		Equal = 23,
 		Script = 24,
+		Execute = 25, // execute custom activity
+		Continue = 26,
 		Goto = 43,
 		BrTrue = 44,
 		BrFalse = 45,
 		Switch = 46,
 		Wait = 50,
-		Data = 200
+		Data = 200,
 	}
 
 	public enum CodeState
@@ -207,6 +210,12 @@ namespace A2v10.SimpleWF
 				case OpCode.Invoke:
 					Invoke(inst.Argument);
 					break;
+				case OpCode.Execute:
+					Execute(inst.Argument, false);
+					break;
+				case OpCode.Continue:
+					Execute(inst.Argument, true);
+					break;
 				case OpCode.Goto:
 					Goto(inst.Address);
 					break;
@@ -255,6 +264,30 @@ namespace A2v10.SimpleWF
 			_stack.Push(IP + 1);
 			Console.WriteLine($"\t\tPush: {IP + 1}, SP={_stack.SP}");
 			Goto(addr);
+		}
+
+
+		void Execute(String arg, Boolean bContinue)
+		{
+			DynamicObject dobj = JsonConvert.DeserializeObject<ExpandoObject>(arg);
+			var tpName = dobj.Get<String>("$type");
+			var tp = Type.GetType(tpName);
+			var elem  = Activator.CreateInstance(tp);
+			var props = tp.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			foreach (var p in props)
+			{
+				if (p.IsSpecialName) continue;
+				if (!p.CanWrite) continue;
+				var val = dobj.Get<Object>(p.Name);
+				p.SetValue(elem, val);
+			}
+			if (elem is CustomActivity customActivity)
+			{
+				if (bContinue)
+					customActivity.Continue(_script);
+				else
+					customActivity.Execute(_script);
+			}
 		}
 
 		Boolean Condition(String expression)

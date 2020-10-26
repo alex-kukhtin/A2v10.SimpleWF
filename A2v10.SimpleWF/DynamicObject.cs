@@ -98,5 +98,45 @@ namespace A2v10.SimpleWF
 				return fallback;
 			return (T)Convert.ChangeType(result, typeof(T));
 		}
+
+		public Boolean TryGetValue(String key, out Object value)
+		{
+			return _dictionary.TryGetValue(key, out value);
+		}
+
+		public T Get<T>(String name)
+		{
+			if (this.TryGetValue(name, out Object val))
+			{
+				if (val is T tval)
+					return tval;
+				return ConvertTo<T>(val);
+			}
+			else
+				throw new Exception($"There is no field \"{name}\" is DynamicObject");
+		}
+
+		public static T ConvertTo<T>(Object val)
+		{
+			if (val == null)
+				return default;
+			return (T) ConvertTo(val, typeof(T));
+		}
+
+		public static Object ConvertTo(Object val, Type type)
+		{
+			switch (val)
+			{
+				case String strVal:
+				{
+					if (type.IsAssignableFrom(typeof(Guid)))
+						return Guid.Parse(strVal);
+					else if (type.IsEnum)
+						return Enum.Parse(type, strVal);
+					break;
+				}
+			}
+			return Convert.ChangeType(val, type);
+		}
 	}
 }

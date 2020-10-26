@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace A2v10.SimpleWF
 {
-	public class Flow : Activity
+	public class Flowchart : Activity
 	{
 		public IList<Activity> Steps { get; } = new List<Activity>();
 
