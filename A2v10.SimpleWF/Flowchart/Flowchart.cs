@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace A2v10.SimpleWF
 {
@@ -21,6 +22,28 @@ namespace A2v10.SimpleWF
 
 			foreach (var step in Steps)
 				step.Compile(compiler);
+		}
+
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+			var start = Steps.FirstOrDefault(x => x.IsStart);
+			var st = start.ExecuteImmediate(context);
+			if (st != ExecState.Complete)
+				return st;
+			return ExecuteNext(context);
+		}
+
+
+		public override Activity FindActivity(string reference)
+		{
+			return Steps.First(x => x.Ref == reference);
+		}
+
+		public override void OnInit(Activity parent)
+		{
+			Parent = parent;
+			foreach (var p in Steps)
+				p.OnInit(this);
 		}
 	}
 }

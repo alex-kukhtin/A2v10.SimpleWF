@@ -38,7 +38,6 @@ namespace A2v10.SimpleWF
 
 		public virtual void Continue(Script script)
 		{
-
 		}
 	}
 }

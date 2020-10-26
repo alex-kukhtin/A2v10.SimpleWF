@@ -10,5 +10,11 @@ namespace A2v10.SimpleWF
 
 		public String Name { get; set; }
 		public String NextState { get; set; }
+
+		public virtual ExecState ExecuteState(ExecuteContext context, out String nextState)
+		{
+			nextState = null;
+			return ExecState.Complete;
+		}
 	}
 }

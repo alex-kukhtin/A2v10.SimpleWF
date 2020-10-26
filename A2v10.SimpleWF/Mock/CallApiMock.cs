@@ -16,6 +16,13 @@ namespace A2v10.SimpleWF.Mock
 		{
 			script.Execute($"Result.res = {{Url:'{Url}', Method: '{Method}', Body:'{Body}' }}");
 		}
+
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+			context.Execute($"Result.res = {{Url:'{Url}', Method: '{Method}', Body:'{Body}' }}");
+			return ExecuteNext(context);
+
+		}
 	}
 
 
@@ -37,6 +44,12 @@ namespace A2v10.SimpleWF.Mock
 		public override void Continue(Script script)
 		{
 			script.Execute($"Result.val.ApiResult = Reply.apiResult; Result.res = Result.val");
+		}
+
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+			context.Execute($"Result.val = {{Url:'{Url}', Method: '{Method}', Body:'{Body}' }}");
+			return ExecState.Idle;
 		}
 	}
 }

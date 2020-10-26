@@ -47,5 +47,32 @@ namespace A2v10.SimpleWF
 			foreach (var tr in Transitions)
 				tr.Compile(compiler);
 		}
+
+		public override ExecState ExecuteState(ExecuteContext context, out String nextState)
+		{
+			if (Entry != null)
+				Entry.ExecuteImmediate(context);
+			for (var i = 0; i<Transitions.Count; i++)
+			{
+				var tr = Transitions[i];
+				if (tr.Trigger != null)
+					tr.Trigger.ExecuteImmediate(context);
+				if (context.Evaluate(tr.Condition)) {
+					tr.Action.ExecuteImmediate(context);
+					nextState = tr.Destination;
+					return EndExecute(context);
+				}
+				
+			}
+			nextState = NextState;
+			return EndExecute(context);
+		}
+
+		ExecState EndExecute(ExecuteContext context)
+		{
+			if (Exit != null)
+				return Exit.ExecuteImmediate(context);
+			return ExecState.Complete;
+		}
 	}
 }

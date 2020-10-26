@@ -6,3 +6,28 @@
 	<Assign Ref="Ref1" To="Result.res" Value="Arg.x + Arg.y" />
 </Flowchart>
 */
+
+
+state machine
+=============
+01: alloc
+02: store	initialState
+03: nop						; loop start
+04: eq		finalState
+05: br		+4
+05: invoke	final
+06: dealloc
+07: ret
+08: push	loopStart		; =3 (for return from step)
+09: switch	<*later*>		; =20 (for example)
+10: goto	-8				; =5 (loop start)
+
+
+-- lookup table
+20: data	'refX', addr
+21: data	'refX,	addr
+22: data	null,	  -1	; end of table
+
+
+parallel
+========

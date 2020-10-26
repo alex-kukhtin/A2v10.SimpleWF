@@ -15,5 +15,11 @@ namespace A2v10.SimpleWF
 			compiler.Emit(OpCode.Script, $"{To} = ({Value});");
 			compiler.EndActivity(this);
 		}
+
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+			context.Execute($"{To} = ({Value});");
+			return ExecuteNext(context);
+		}
 	}
 }

@@ -14,5 +14,11 @@ namespace A2v10.SimpleWF
 			compiler.Emit(OpCode.Store, NextState);
 			compiler.EndActivity(this);
 		}
+
+		public override ExecState ExecuteState(ExecuteContext context, out String nextState)
+		{
+			nextState =  NextState;
+			return ExecState.Complete;
+		}
 	}
 }

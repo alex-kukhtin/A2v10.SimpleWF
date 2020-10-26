@@ -1,10 +1,35 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace A2v10.SimpleWF.Test
 {
+
+
+	public abstract class Compiler<T>
+	{
+
+		public abstract void Compile();
+	}
+
+	public class AssignCompiler : Compiler<Assign>
+	{
+		public override void Compile()
+		{
+			Console.WriteLine("Compile Assign");
+		}
+	}
+
+	public class SequenceCompiler : Compiler<Sequence>
+	{
+		public override void Compile()
+		{
+			Console.WriteLine("Compile Sequecne");
+		}
+	}
+
 	class Program
 	{
 		static void Main(string[] args)
@@ -16,7 +41,9 @@ namespace A2v10.SimpleWF.Test
 
 			var log = provider.GetService<ILogger<Workflow>>();
 
-
+			List<Activity> acts = new List<Activity>();
+			acts.Add(new Assign());
+			acts.Add(new Sequence());
 
 			/*
 			var f = new Flow() { Ref = "Flow" };
@@ -50,11 +77,11 @@ namespace A2v10.SimpleWF.Test
 
 			var wf = new Workflow() { Root = f };
 
-			var objCode = wf.Compile();
+			//var objCode = wf.Compile();
 
 			var arg = new DynamicObject();
 			arg.Set("x", 5);
-			var res = objCode.Run(arg);
+			// var res = objCode.Run(arg);
 		}
 
 		static void ConfigreServices(IServiceCollection services)

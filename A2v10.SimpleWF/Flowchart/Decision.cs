@@ -22,5 +22,21 @@ namespace A2v10.SimpleWF
 			compiler.Emit(OpCode.Invoke, Else);
 			compiler.EndActivity(this);
 		}
+
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+			var cond = context.Evaluate(Condition);
+			if (cond)
+			{
+				if (Then != null)
+					return Parent.FindActivity(Then).ExecuteImmediate(context);
+			}
+			else 
+			{
+				if (Else != null)
+					return Parent.FindActivity(Else).ExecuteImmediate(context);
+			}
+			return ExecuteNext(context);
+		}
 	}
 }

@@ -9,6 +9,8 @@ namespace A2v10.SimpleWF
 	{
 		public List<StateBase> States { get; set; } = new List<StateBase>();
 
+		public String CurrentState { get; set; }
+
 		public override void Compile(Compiler compiler)
 		{
 			// executing
@@ -34,7 +36,7 @@ namespace A2v10.SimpleWF
 			// Swith does not Invoke, but makes Goto!
 			compiler.Emit(OpCode.Push, null, loopStart); // for "Ret" from Steps
 			Int32 emitAddr = compiler.Emit(OpCode.Switch, null, 0);
-			compiler.EmitOffset(OpCode.Goto, -7 /*loop start*/);
+			compiler.EmitOffset(OpCode.Goto, -8 /*loop start*/);
 			compiler.EndActivity(this);
 
 			// compile children
@@ -53,6 +55,36 @@ namespace A2v10.SimpleWF
 			}
 			compiler.Emit(OpCode.Data, null, -1);
 			compiler.SetAddress(emitAddr, lookupTableAddress);
+		}
+
+		public override void OnInit(Activity parent)
+		{
+			Parent = parent;
+			foreach (var s in States)
+				s.OnInit(this);
+		}
+
+		public override Activity FindActivity(string reference)
+		{
+			return States.First(x => x.Name == reference);
+		}
+
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+			var first = States.First(x => x.IsStart);
+			CurrentState = first.Name;
+			while (CurrentState != null)
+			{
+				var nextState = States.First(x => x.Name == CurrentState);
+				String nextStateString;
+				var st = nextState.ExecuteState(context, out nextStateString);
+				if (st != ExecState.Complete)
+					return st;
+				CurrentState = nextStateString;
+				if (nextState.IsFinal)
+					break;
+			}
+			return ExecuteNext(context);
 		}
 	}
 }

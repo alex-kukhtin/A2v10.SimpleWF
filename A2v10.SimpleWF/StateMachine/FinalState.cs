@@ -19,5 +19,13 @@ namespace A2v10.SimpleWF
 			// compile children
 			Entry?.Compile(compiler);
 		}
+
+		public override ExecState ExecuteState(ExecuteContext context, out String nextState)
+		{
+			nextState = null;
+			if (Entry != null)
+				return Entry.ExecuteImmediate(context);
+			return ExecState.Complete;
+		}
 	}
 }
