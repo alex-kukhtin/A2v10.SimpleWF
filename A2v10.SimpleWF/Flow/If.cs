@@ -26,5 +26,18 @@ namespace A2v10.SimpleWF
 			Then?.Compile(compiler);
 			Else?.Compile(compiler);
 		}
+
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+			Boolean condition = false;
+			if (context.IsContinue)
+				condition = context.Restore<Boolean>(Ref, "Condition");
+			else
+				condition = context.Evaluate(Condition);
+			if (condition)
+				return Then.ExecuteImmediate(context);
+			else
+				return Else.ExecuteImmediate(context);
+		}
 	}
 }

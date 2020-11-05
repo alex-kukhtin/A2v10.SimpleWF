@@ -26,8 +26,13 @@ namespace A2v10.SimpleWF
 
 		public override ExecState ExecuteImmediate(ExecuteContext context)
 		{
-			var start = Steps.FirstOrDefault(x => x.IsStart);
-			var st = start.ExecuteImmediate(context);
+			String stepName = "";
+			if (context.IsContinue)
+				stepName = context.Restore<String>(Ref, "Step");
+			else
+				stepName = Steps.FirstOrDefault(x => x.IsStart).Ref;
+			var step = FindActivity(stepName);
+			var st = step.ExecuteImmediate(context);
 			if (st != ExecState.Complete)
 				return st;
 			return ExecuteNext(context);

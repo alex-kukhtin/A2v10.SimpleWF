@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\A2v10.SimpleWF\A2v10.SimpleWF.csproj" />
+    <ProjectReference Include="..\A2v10.Xaml\A2v10.Xaml.csproj" />
   </ItemGroup>
 
 </Project>

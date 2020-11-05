@@ -24,15 +24,20 @@ namespace A2v10.SimpleWF
 
 		public override ExecState ExecuteImmediate(ExecuteContext context)
 		{
-			// order is important!
-			for (var i = 0; i < Steps.Count; i++)
+			Int32 index = 0;
+			if (context.IsContinue)
+				index = context.Restore<Int32>(Ref, "Index");
+			while (index < Steps.Count)
 			{
-				var st = Steps[i].ExecuteImmediate(context);
+				context.Store(Ref, "Index", index);
+				var st = Steps[index].ExecuteImmediate(context);
 				if (st != ExecState.Complete)
 					return st;
+				index += 1;
 			}
-			return ExecuteNext(context);
+			return ExecState.Complete;
 		}
+
 
 		public override DynamicObject Store()
 		{

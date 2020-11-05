@@ -34,7 +34,10 @@ namespace A2v10.SimpleWF.Mock
 
 		public String Body { get; set; }
 
+		public String Bookmark { get; set; }
+
 		public override bool IsWaitable => true;
+
 
 		public override void Execute(Script script)
 		{
@@ -43,12 +46,24 @@ namespace A2v10.SimpleWF.Mock
 
 		public override void Continue(Script script)
 		{
-			script.Execute($"Result.val.ApiResult = Reply.apiResult; Result.res = Result.val");
+			throw new NotImplementedException();
+			//script.Execute($"Result.val.ApiResult = Reply.apiResult; Result.res = Result.val");
 		}
 
 		public override ExecState ExecuteImmediate(ExecuteContext context)
 		{
-			context.Execute($"Result.val = {{Url:'{Url}', Method: '{Method}', Body:'{Body}' }}");
+			if (context.IsContinue)
+			{
+				var storedBookmark = context.Restore<String>(Ref, "Bookmark");
+				if (storedBookmark == context.Bookmark)
+				{
+					context.SetVariable("Reply", context.Reply);
+					context.IsContinue = false;
+					return ExecState.Complete;
+				}
+			}
+			context.Execute($"Result.args = {{Url:'{Url}', Method: '{Method}', Body:'{Body}' }}");
+			context.Store(Ref, "Bookmark", Bookmark);
 			return ExecState.Idle;
 		}
 	}

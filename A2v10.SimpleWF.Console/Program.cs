@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using A2v10.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Xml.Serialization;
 
 namespace A2v10.SimpleWF.Test
 {
@@ -30,9 +32,9 @@ namespace A2v10.SimpleWF.Test
 		}
 	}
 
-	class Program
+	class Program23
 	{
-		static void Main(string[] args)
+		void Main23(string[] args)
 		{
 			var services = new ServiceCollection();
 			ConfigreServices(services);
@@ -91,5 +93,23 @@ namespace A2v10.SimpleWF.Test
 				.AddSingleton<Workflow>();
 		}
 
+	}
+
+
+	class Program
+	{
+		const String XmlTest =
+@"
+<Flowchart Name='Assign' Ref='Root'>
+	<Start Ref='Ref0' Next='Ref1' />
+	<Assign Ref='Ref1' To='Result.res' Value='Arg.x + Arg.y' />
+</Flowchart>
+";
+
+		static void Main()
+		{
+			Console.WriteLine("xaml reading");
+			XamlServices.Read(XmlTest.Replace('\'', '"'));
+		}
 	}
 }

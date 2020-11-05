@@ -18,6 +18,8 @@ namespace A2v10.SimpleWF
 
 		public override ExecState ExecuteImmediate(ExecuteContext context)
 		{
+			if (context.IsContinue)
+				return ExecState.Complete;
 			context.Execute($"{To} = ({Value});");
 			return ExecuteNext(context);
 		}

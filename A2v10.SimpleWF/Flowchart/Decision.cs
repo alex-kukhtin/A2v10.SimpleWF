@@ -25,8 +25,15 @@ namespace A2v10.SimpleWF
 
 		public override ExecState ExecuteImmediate(ExecuteContext context)
 		{
-			var cond = context.Evaluate(Condition);
-			if (cond)
+			bool condition = false;
+			if (context.IsContinue)
+				condition = context.Restore<Boolean>(Ref, "Condition");
+			else
+			{
+				condition = context.Evaluate(Condition);
+				context.Store(Ref, "Condition", condition);
+			}
+			if (condition)
 			{
 				if (Then != null)
 					return Parent.FindActivity(Then).ExecuteImmediate(context);

@@ -16,7 +16,7 @@ namespace A2v10.SimpleWF.Tests
 		public void CustomActivity()
 		{
 			var f = new Sequence() { Ref = "Ref0" };
-			f.Steps.Add(new CallApiMock() { Ref = "Ref1", Url = "MockUrl", Method = "POST", Body="MockBody" });
+			f.Steps.Add(new CallApiMock() { Ref = "Ref1", Url = "MockUrl", Method = "POST", Body = "MockBody" });
 
 			var wf = new Workflow() { Root = f };
 			var arg = new DynamicObject();
@@ -32,9 +32,12 @@ namespace A2v10.SimpleWF.Tests
 		public void WaitableCustomActivity()
 		{
 			var f = new Sequence() { Ref = "Ref0" };
-			f.Steps.Add(new WaitableCallApiMock() { Ref = "Ref1", Url = "MockUrl", Method = "POST", Body = "MockBody" });
+			f.Steps.Add(new WaitableCallApiMock() { Ref = "Ref1", Url = "MockUrl", Method = "POST", Body = "MockBody", Bookmark="Mark1" });
+			f.Steps.Add(new Code() { Ref = "Ref2", Script = "Result.res = Reply.apiResult;" });
 
-			var wf = new Workflow() { Root = f };
+			var st = new DynamicObject();
+
+			var wf = new Workflow() { Root = f, Storage = st };
 
 			var objCode = wf.Compile();
 
@@ -43,26 +46,30 @@ namespace A2v10.SimpleWF.Tests
 			var state = wf.RunImmediate(arg);
 			Assert.AreEqual(ExecState.Idle, state);
 
-			var stored = wf.Store();
-			var str = JsonConvert.SerializeObject(stored);
-			var restored = JsonConvert.DeserializeObject<ExpandoObject>(str);
-			wf.Restore(restored);
+
+			var stJson = JsonConvert.SerializeObject(st.Root);
+
+
+			//var stored = wf.Store();
+			//var str = JsonConvert.SerializeObject(stored);
+			//var restored = JsonConvert.DeserializeObject<ExpandoObject>(str);
+			//wf.Restore(restored);
 
 			int z = 55;
 
-			/*
 			var reply = new DynamicObject();
 			reply.Set("apiResult", "API Result");
+			wf.Continue("Mark1", reply);
 
-			wf.Continue("", reply);
 
+			var res = wf.ResultImmediate;
 
-			var res = objCode.Result;
-			Assert.AreEqual("MockUrl", res.Eval<String>("res.Url"));
-			Assert.AreEqual("POST", res.Eval<String>("res.Method"));
-			Assert.AreEqual("MockBody", res.Eval<String>("res.Body"));
-			Assert.AreEqual("API Result", res.Eval<String>("res.ApiResult"));
-			*/
+			var resJson = JsonConvert.SerializeObject(res.Root);
+
+			Assert.AreEqual("MockUrl", res.Eval<String>("args.Url"));
+			Assert.AreEqual("POST", res.Eval<String>("args.Method"));
+			Assert.AreEqual("MockBody", res.Eval<String>("args.Body"));
+			Assert.AreEqual("API Result", res.Eval<String>("res"));
 		}
 	}
 }

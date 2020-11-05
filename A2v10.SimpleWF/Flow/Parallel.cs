@@ -18,6 +18,12 @@ namespace A2v10.SimpleWF
 
 		public CompletionCondition CompletionCondition { get; set; }
 
+		public override ExecState ExecuteImmediate(ExecuteContext context)
+		{
+
+			return ExecuteNext(context);
+		}
+
 		public override void Compile(Compiler compiler)
 		{
 			compiler.StartActivity(this);
